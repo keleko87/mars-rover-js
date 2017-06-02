@@ -1,44 +1,24 @@
-/* Grid: I suppose a grid 10x10 where de coordinate are like this:
-  grid[0] = [0,0]  //  North - West
-  grid[1] = [1,0]
-  .......
-  grid[12] = [1,2]
-  grid[99] = [9,9]  //  South - East
-*/
-
-var cols = 10 ; // North <--> South - 10 colums
-var rows = 10 ; // East <--> West - 10 rows
+var cols = 6 ; // North <---> South
+var rows = 4 ; // West <---> East
 var grid = [];  // Array contains positions
-var directions = ['N','S','E','W'];
+// var directions = ['N','S','E','W'];
 
-// Create grid
-for( var x = 0; x < cols; x++){
-  for(var y = 0; y < rows; y++){
+// Create and print grid
+for( var x = 0; x < rows; x++){
+  for(var y = 0; y < cols; y++){
       grid.push( [x,y] );  // Add in first position of array (North-South coordinate) and in second position (East-West coordinate)
   }
 }
 //console.log(grid);
 
-/*   PRINT GRID
+/*  I assumed coordinates of Grid are like this:
                                   - NORTH -
    [0,0]   [0,1]   [0,2]   [0,3]   [0,4]   [0,5]   [0,6]   [0,7]   [0,8]   [0,9]
 
-   [1,0]   [1,1]   [1,2]   [1,3]   [1,4]   [1,5]   [1,6]   [1,7]   [1,8]   [1,9]
-
-   [2,0]   [2,1]   [2,2]   [2,3]   [2,4]   [2,5]   [2,6]   [2,7]   [2,8]   [2,9]
-
-W  [3,0]   [3,1]   [3,2]   [3,3]   [3,4]   [3,5]   [3,6]   [3,7]   [3,8]   [3,9]   E
+W  ............................................................................    E
 E                                                                                  A
-S  [4,0]   [4,1]   [4,2]   [4,3]   [4,4]   [4,5]   [4,6]   [4,7]   [4,8]   [4,9]   S
+S  ............................................................................    S
 T                                                                                  T
-   [5,0]   [5,1]   [5,2]   [5,3]   [5,4]   [5,5]   [5,6]   [5,7]   [5,8]   [5,9]
-
-   [6,0]   [6,1]   [6,2]   [6,3]   [6,4]   [6,5]   [6,6]   [6,7]   [6,8]   [6,9]
-
-   [7,0]   [7,1]   [7,2]   [7,3]   [7,4]   [7,5]   [7,6]   [7,7]   [7,8]   [7,9]
-
-   [8,0]   [8,1]   [8,2]   [8,3]   [8,4]   [8,5]   [8,6]   [8,7]   [8,8]   [8,9]
-
    [9,0]   [9,1]   [9,2]   [9,3]   [9,4]   [9,5]   [9,6]   [9,7]   [9,8]   [9,9]
 
                                 - SOUTH -
@@ -47,21 +27,11 @@ T                                                                               
 var printGrid = document.getElementById("grid");
 
 for( var i = 0; i < grid.length; i++){
-  if( i % 10 === 0 ) {
+  if( i % cols === 0 ) {  // If i is divisible by number of rows, finished the row
     printGrid.innerHTML += '<br><br>';
   }
 printGrid.innerHTML += '&nbsp;<span id='+ i +'>['+ grid[i] +']</span>&nbsp;&nbsp;';
 }
-
-
-
-
-// Initial position and direction
-var myRover = {
-  position: [0,0],  // I suppose initial position 0,0 is situated in 0 North - 0 West.
-  direction: 'N'    // Inital direction South
-};
-
 
 // GO FORWARD
 function goForward(rover) {
@@ -157,22 +127,24 @@ function turnRight(rover){
 // wraps from one edge of the grid to another
 function changeEdgeGrid(rover){
 
+  // ROVER POSITION 0 (NORTH - SOUTH)
   if(rover.position[0] < 0 ){
-    rover.position[0] = cols - 1;
+    rover.position[0] = rows - 1;
     console.log("New Rover Position: [" + rover.position[0] + ", " + rover.position[1] + "]");
     return;
   }
-  if(rover.position[0] >= cols - 1 ){
+  if(rover.position[0] > rows - 1 ){
     rover.position[0] = 0;
     console.log("New Rover Position: [" + rover.position[0] + ", " + rover.position[1] + "]");
     return;
   }
+  // ROVER POSITION 1 (WEST - EAST)
   if(rover.position[1] < 0 ){
-    rover.position[1] = rows - 1;
+    rover.position[1] = cols - 1;
     console.log("New Rover Position: [" + rover.position[0] + ", " + rover.position[1] + "]");
     return;
   }
-  if(rover.position[1] > rows - 1 ){
+  if(rover.position[1] > cols - 1 ){
     rover.position[1] = 0;
     console.log("New Rover Position: [" + rover.position[0] + ", " + rover.position[1] + "]");
     return;
@@ -180,20 +152,25 @@ function changeEdgeGrid(rover){
 
 }
 
+
+var isValidSequence = true;  // Check if sequence of commands sended is valid
+
 // SEND COMMANDS TO MOVE ROVER
-
-
 function sendCommands(commands){
 
   var validCommands = ['f','b','l','r'];
   var commandsSended = [];
-  commandsSended = commands.split('');
 
-  for( var i = 0; i < commandsSended.length; i++){
+  if( commands === '' || commands === null )
+    console.error('Error. You must type at least one command to move the rover');
+  else
+    commandsSended = commands.split('');
 
-    // First check if the command is validComand
-    // if( commandsSended[i].indexOf(validsCommands[0]) ){
 
+
+  for( var i = 0; i < commandsSended.length; i++ ){
+
+      // check if the command is validComand
       switch(true) {
 
         case commandsSended[i] === validCommands[0] :
@@ -213,16 +190,17 @@ function sendCommands(commands){
           changeEdgeGrid(myRover);
           break;
         default:
-          console.warn('You must type a sequence of valid commands');
-          return;
-          // break;
+          isValidSequence = false;
+          console.warn('Invalid command: ', commandsSended[i]);
+          break;
       }
 
 
   }
-
+  return isValidSequence;
 
 }
+
 
 // PRINT ROVER IN GRID
 function printRoverInMap(rover){
@@ -235,9 +213,13 @@ function printRoverInMap(rover){
   }
 }
 
-var commands = [];
-var commands = prompt("Send commands to move the rover. For example: fffblffrb");
-console.log(commands);
+// INIT POSITION OF MARS ROVER
+var myRover = {
+  position: [0,0],
+  direction: 'N'
+};
 
-sendCommands(commands);
-printRoverInMap(myRover);
+var commands = [];
+var commands = prompt("Send a sequence of commands to move the rover (f,b,r,l). For example: fffblffrb");
+
+isValidSequence = sendCommands(commands) ? printRoverInMap(myRover) : alert('Error: You must type a valid sequence of commands');
